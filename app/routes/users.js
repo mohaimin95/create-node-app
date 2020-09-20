@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
+const Auth = require("../middlewares/auth");
 router.post('/register', (req, res) => {
     let {
         email = null,
@@ -32,6 +33,16 @@ router.post('/login', (req, res) => {
     } else {
         res.status(400).send({
             message: "Invalid/Missing email or password !"
+        })
+    }
+});
+router.post('/change-password', Auth(), (req, res) => {
+    if (req.body.password) {
+        userController.changePassword(req.body.password, req.user._id).then(() => res.send({ message: "Successfully Changed !" }))
+            .catch(err => res.status(err.status || 500).send(err));
+    } else {
+        res.status(400).send({
+            message: "Invalid/Missing Password"
         })
     }
 });

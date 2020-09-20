@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("../helpers/bcrypt");
-const jwt = require("../helpers/bcrypt");
+const jwt = require("../helpers/jwt");
 
 let userController = {};
 
@@ -14,12 +14,12 @@ userController.register = ({ name, email, password }) => {
         });
         user.save((err, doc) => {
             if (err) {
-                let message = "Error in Saving Data !",status=500;
-                switch(String(err.code)) {
+                let message = "Error in Saving Data !", status = 500;
+                switch (String(err.code)) {
                     case '11000':
-                     message = "Email Already Exists";
-                     status = 409
-                     break;
+                        message = "Email Already Exists";
+                        status = 409
+                        break;
                 }
                 reject({
                     message,
@@ -67,5 +67,8 @@ userController.login = ({ email, password }) => {
         });
     })
 }
-const generateToken = _id => jwt.generateHash({ _id, createdAt: new Date().getTime() })
+userController.changePassword = (password, userId) => {
+    return User.updateOne({ _id: userId }, { $set: { password: bcrypt.generateHash(password) } });
+}
+const generateToken = _id => jwt.generateToken({ _id, createdAt: new Date().getTime() })
 module.exports = userController;
