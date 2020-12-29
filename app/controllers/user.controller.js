@@ -80,7 +80,7 @@ userController.getUserById = (userId) => {
 };
 userController.isEmailTaken = (email) => {
   return new Promise((resolve, reject) => {
-    User.countDocuments({ email: new RegExp(email, "i") }, (err, count) => {
+    User.countDocuments({ email: new RegExp("^"+String(email).trim()+"$", "i") }, (err, count) => {
       if (err) {
         reject({ error: "Error in checking!" });
       } else resolve(count > 0);
