@@ -37,6 +37,14 @@ router.post("/login", (req, res) => {
   }
 });
 
+router.get("/is-email-taken/:email", (req, res) => {
+  let { email } = req.params;
+  userController
+    .isEmailTaken(email)
+    .then((isEmailTaken) => res.send({ isEmailTaken }))
+    .catch((err) => res.status(500).send(err));
+});
+
 //================== User Authentication needed ==========================================
 router.use(Auth());
 router.post("/change-password", (req, res) => {

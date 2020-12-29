@@ -73,10 +73,19 @@ userController.changePassword = (password, userId) => {
 };
 userController.getUserById = (userId) => {
   if (ObjectId.isValid(userId)) {
-    return User.findById(userId, { password: 0,__v:0 }).lean();
+    return User.findById(userId, { password: 0, __v: 0 }).lean();
   } else {
     return Promise.resolve(null);
   }
+};
+userController.isEmailTaken = (email) => {
+  return new Promise((resolve, reject) => {
+    User.countDocuments({ email: new RegExp(email, "i") }, (err, count) => {
+      if (err) {
+        reject({ error: "Error in checking!" });
+      } else resolve(count > 0);
+    });
+  });
 };
 const generateToken = (_id) =>
   jwt.generateToken({ _id, createdAt: new Date().getTime() });
